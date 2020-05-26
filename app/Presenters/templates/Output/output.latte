@@ -1,21 +1,17 @@
 {block content}
-
-
-<h1 n:href="import">Ahoj</h1>
-
 <table>
     <thead>
         <tr>
-            <thead>Datum</thead>
-            <thead>Částka (Amount)</thead>
-            <thead>Popis (Comment)</thead>
+            <th>Datum</th>
+            <th>Částka (Amount)</th>
+            <th>Popis (Comment)</th>
         </tr>
     </thead>
     <tbody>
         {foreach $csv_import as $item}
         <tr>
             <td>{$item->payment_date}</td>
-            <td>{$item->amount}</td>
+            <td>{$item->amount |number:2:',':' '} Kč</td>
             <td>{$item->comment}</td>
         </tr>
         {/foreach}

@@ -25,7 +25,7 @@ class OutputPresenter extends Nette\Application\UI\Presenter
             $this->exportTable = $exportTable;
     }
 
-    public function renderDefault()
+    public function beforeRender()
 {
         $this->template->csv_import = $this->exportTable->viewTableData('csv_import');
 }
