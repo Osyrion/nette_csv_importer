@@ -1,0 +1,14 @@
+parameters:
+
+
+application:
+	mapping:
+		*: App\*Module\Presenters\*Presenter
+
+database:
+	dsn: "sqlite:%appDir%/Model/database.sql"
+
+services:
+	- App\Model\ExportTable
+	- App\Model\ImportRepository
+	router: App\Router\RouterFactory::createRouter
