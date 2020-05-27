@@ -33,10 +33,11 @@ class ImportPresenter extends Nette\Application\UI\Presenter
 	protected function createComponentImportForm(): Form
 	{
         $form = new Form;
-		$form->addUpload('file', 'Vyberte soubor:')
+        $form->addUpload('file', 'Vyberte soubor:')
+             
              //->setRequired(true)
              //->addRule(Form::MIME_TYPE, 'Only CSV you can upload!', 'text/csv')
-             ->addRule(Form::MAX_FILE_SIZE, 'Max 5 mB.', 5 * 1024 * 1024);
+             ->addRule(Form::MAX_FILE_SIZE, 'Max 2 mB.', 2 * 1024 * 1024);
         $form->addText('username', 'Meno:')
              ->setDefaultValue('uniuser');
         $form->addPassword('password', 'Heslo:')
@@ -76,7 +77,7 @@ class ImportPresenter extends Nette\Application\UI\Presenter
     {
         if ($values->username == ImportRepository::UNIUSER && $values->password == ImportRepository::UNIPASS)
         {
-            $this->redirect('output');
+            $this->redirect('Output:output');
         }
         else {
             echo "NOT OK";
