@@ -1,49 +1,67 @@
-{* This is the welcome page, you can delete it *}
-
 {block content}
 
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <div class="card rounded-lg border border-info shadow">
-                <div class="card-header">
-                    Export z CSV do HTML
-                </div>
-                <div class="card-body">
-                    {form importForm}
-                        <div class="form-group">
-                            <div class="custom-file">
-                                {input file}
-                                <!--<label class="custom-file-label" for="csvFile" data-browse="max 5 MB">Vyberte CSV soubor</label>
-                        -->    </div>
-                        </div>
-                        <div class="form-group d-none">
-                            {input username}
-                        </div>
-                        <div class="form-group">
-                            {input password}
-                        </div>
-                        <div class="form-group">
-                            <div class="btn-group btn-block" role="group" aria-label="export group">
-                                {input exported}
-                                {input export}
-                            </div>
-                        </div>
-                    {/form}
-                    <!-- Display status message -->
-                    <?php if(!empty($statusMsg)){ ?>
-                    <div class="col-sm-10 offset-sm-1">
-                        <div class="alert <?php echo $statusType; ?>"><?php echo $statusMsg; ?></div>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+
+	<link rel="stylesheet" href="{$basePath}/css/bootstrap.min.css" />
+
+	<title>CSV Export</title>
+</head>
+
+<body>
+	<div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card rounded-lg border border-info shadow">
+                    <div class="card-header">
+                        Export z CSV do HTML
                     </div>
-                    
-                    <?php } ?>
-                    <div class="col-sm-10 offset-sm-1">
-                        <div class="d-none" id="fileSizeToggle">
-                            <div class="alert alert-danger text-center">Soubor je příliš velký!</div>
+                    <div class="card-body">
+                        {form importForm class => 'col-sm-10 offset-sm-1'}
+                            <div class="form-group">
+                                <div class="custom-file">
+                                    {input file}
+                                    <label class="custom-file-label" for="frm-importForm-file" data-browse="max 5 MB">Vyberte CSV soubor</label>
+                                </div>
+                            </div>
+                            <div class="form-group d-none">
+                                {input username}
+                            </div>
+                            <div class="form-group">
+                                {input password}
+                            </div>
+                            <div class="form-group" id="uploadInput">
+                                <div class="btn-group btn-block" role="group" aria-label="export group">
+                                    {input exported}
+                                    {input export}
+                                </div>
+                            </div>
+                        {/form}</form>
+                        <div class="col-sm-10 offset-sm-1">
+                            <!-- Display status message -->
+                            {foreach $flashes as $flash}
+                                <div class="alert alert-danger text-center flash {$flash->type}">
+                                    {$flash->message}
+                                </div>
+                            {/foreach}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    {block scripts}
+	    <script src="https://nette.github.io/resources/js/3/netteForms.min.js"></script>
+        <script type="text/javascript">
+            document.querySelector('.custom-file-input').addEventListener('change',function(e){
+                var fileName = document.getElementById("frm-importForm-file").files[0].name;
+                var nextSibling = e.target.nextElementSibling
+                nextSibling.innerText = fileName
+            })
+        </script>
+	{/block}
+</body>
+</html>

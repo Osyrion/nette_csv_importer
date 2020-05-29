@@ -34,44 +34,26 @@ class ImportPresenter extends Nette\Application\UI\Presenter
 	{
         $form = new Form;
         $form->addUpload('file', 'Vyberte soubor:')
-             
-             //->setRequired(true)
-             //->addRule(Form::MIME_TYPE, 'Only CSV you can upload!', 'text/csv')
+             ->setHtmlAttribute('class', 'custom-file-input')
+             ->setHtmlAttribute('accept', '.csv')
              ->addRule(Form::MAX_FILE_SIZE, 'Max 2 mB.', 2 * 1024 * 1024);
         $form->addText('username', 'Meno:')
              ->setDefaultValue('uniuser');
         $form->addPassword('password', 'Heslo:')
-             ->setRequired('Zadajte prosím heslo!');
+             ->setHtmlAttribute('class', 'form-control')
+             ->setHtmlAttribute('placeholder', 'Zadejte heslo')
+             ->addRule(Form::REQUIRED, 'Zadejte prosím heslo!');
         $form->addSubmit('exported', 'EXPORTOVÁNO')
+             ->setHtmlAttribute('id', 'exported')
+             ->setHtmlAttribute('class', 'btn btn-success col-sm-6 uploadInput')
              ->onClick[] = [$this, 'viewExported'];
         $form->addSubmit('export', 'EXPORT')
+             ->setHtmlAttribute('id', 'export')
+             ->setHtmlAttribute('class', 'btn btn-primary col-sm-6 uploadInput')
              ->onClick[] = [$this, 'uploadCsvFormSucceeded'];
         $form->addProtection();
         return $form;
     }
-
-/*
-        public function viewExported($form, $values)
-        {
-            $csv = $values->file;
-            echo $csv->getTemporaryFile();
-            echo $values->file->name;
-            echo "<br>";
-            echo $form['file']->value;
-            echo "<br>";
-            //$this->redirect('this', $usera);
-
-            //$file = fopen('"' . $values->file . '"', "r");
-            $filename = $csv->getTemporaryFile();
-                if (is_readable($filename)) {
-                    echo 'The file is readable';
-                } else {
-                    echo 'The file is not readable';
-                }
-            
-            echo file_get_contents($filename);
-        }
-*/
 
     public function viewExported($form, $values): void
     {
@@ -80,7 +62,7 @@ class ImportPresenter extends Nette\Application\UI\Presenter
             $this->redirect('Output:output');
         }
         else {
-            echo "NOT OK";
+            $this->flashMessage('Zadané heslo není správné!');
         }
     }
 
@@ -144,7 +126,8 @@ class ImportPresenter extends Nette\Application\UI\Presenter
 
         }
         else {
-            echo "NOT OK";
+            $close = false;
+            $this->flashMessage('Zadané heslo není správné!');
         }
 
         if ($close)
