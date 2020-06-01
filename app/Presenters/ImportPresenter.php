@@ -8,21 +8,24 @@ use App\Model;
 use App\Model\ImportRepository;
 use Nette;
 use Nette\Application\UI\Form;
-use Nette\Utils\FileSystem;
-use Nette\Utils\ArrayHash;
-use Nette\Forms\Controls\UploadControl;
 use Nette\Http\FileUpload;
 
 class ImportPresenter extends Nette\Application\UI\Presenter
 {
 	/** @var Model\ImportRepository */
-	private $csv_import;
-
+    private $csv_import;
 
 	public function __construct(Model\ImportRepository $csv_import)
 	{
-		$this->csv_import = $csv_import;
-	}
+        $this->csv_import = $csv_import;
+    }
+
+    
+    public function renderDefault()
+    {
+        $this->template->csv_import = $this->csv_import->findHash($trn_hash); 
+    }
+
 
 	/********************* component factories *********************/
 
@@ -84,36 +87,45 @@ class ImportPresenter extends Nette\Application\UI\Presenter
 
                     while (($data = fgetcsv($csvFile, 1000, ";")) !== FALSE)
                     {
-                        if (array_key_exists(13, $data) || array_key_exists(33, $data) || array_key_exists(11, $data))
+                        if (array_key_exists(13, $data) || array_key_exists(33, $data) || array_key_exists(11, $data) || array_key_exists(8, $data))
                         {
-                            $payment_date = $data[13];
+                            
                             $amount = $data[33];
 
-                            // CHECKING ENCODING
-                            $check_encoding = mb_detect_encoding($data[11], mb_detect_order(), false);
-
-                            if (mb_check_encoding($data, 'utf-8')) {
-                                // USE THIS IF CSV IS ALREADY IN UTF-8
-                                $comment = $data[11];
-                            }
-                            else {
-                                if($check_encoding == "UTF-8")
-                                {
-                                    $data[11] = mb_convert_encoding($data[11], 'UTF-8', 'UTF-8');    
-                                }
-
-                                // CONVERT TO UTF-8
-                                $comment = iconv($check_encoding, 'utf-8//IGNORE', $data[11]);
-                            }
-                            
                             // CHECKING IF AMOUNT IS NOT 0
                             if ($amount != 0){
-                                
-                                $this->csv_import->insert([
-                                    'payment_date' => $payment_date,
-                                    'amount' => $amount,
-                                    'comment' => $comment
-                                ]);
+
+                                $payment_date = $data[13];
+                                $comments = $data[11] . " " . $data[23] . " " . $data[24] . " " . $data[25];
+
+                                // CHECKING ENCODING
+                                $check_encoding = mb_detect_encoding($data[11], mb_detect_order(), false);
+
+                                if (mb_check_encoding($data, 'utf-8')) {
+                                    // USE THIS IF CSV IS ALREADY IN UTF-8
+                                    $comment = $comments;
+                                }
+                                else {
+                                    if($check_encoding == "UTF-8")
+                                    {
+                                        $comments = mb_convert_encoding($comments, 'UTF-8', 'UTF-8');    
+                                    }
+
+                                    // CONVERT TO UTF-8
+                                    $comment = iconv($check_encoding, 'utf-8//IGNORE', $comments);
+                                }
+                            
+                                $trn_hash = sha1($data[8]);
+                                $check_trn = $this->csv_import->findHash($trn_hash);
+
+                                if ($check_trn == 0) {
+                                    $this->csv_import->insert([
+                                        'transaction_hash' => $trn_hash,
+                                        'payment_date' => $payment_date,
+                                        'amount' => $amount,
+                                        'comment' => $comment
+                                    ]);
+                                }
                             }
                         }
                     }

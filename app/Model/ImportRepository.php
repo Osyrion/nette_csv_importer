@@ -6,7 +6,6 @@ namespace App\Model;
 
 use Nette;
 
-
 class ImportRepository
 {
 	use Nette\SmartObject;
@@ -41,4 +40,10 @@ class ImportRepository
 	{
 		$this->findAll()->insert($values);
 	}
+
+	public function findHash($val)
+	{
+		return $this->database->table('csv_import')->where('transaction_hash = ?', $val)->count('*');
+	}
+
 }
