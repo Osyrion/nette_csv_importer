@@ -99,22 +99,12 @@ class ImportPresenter extends Nette\Application\UI\Presenter
                                 $comments = $data[11] . " " . $data[23] . " " . $data[24] . " " . $data[25];
 
                                 // CHECKING ENCODING
-                                $check_encoding = mb_detect_encoding($data[11], mb_detect_order(), false);
+                                // $check_encoding = mb_detect_encoding($comments);
 
-                                if (mb_check_encoding($data, 'utf-8')) {
-                                    // USE THIS IF CSV IS ALREADY IN UTF-8
-                                    $comment = $comments;
-                                }
-                                else {
-                                    if($check_encoding == "UTF-8")
-                                    {
-                                        $comments = mb_convert_encoding($comments, 'UTF-8', 'UTF-8');    
-                                    }
+                                // CONVERT FROM WINDOWS-1250 to UTF-8 ENCODING
+                                $comment = iconv('cp1250', 'UTF-8//TRANSLIT', $comments);                       
 
-                                    // CONVERT TO UTF-8
-                                    $comment = iconv($check_encoding, 'utf-8//IGNORE', $comments);
-                                }
-                            
+                                // CHECK TRANSACTION HASH
                                 $trn_hash = sha1($data[8]);
                                 $check_trn = $this->csv_import->findHash($trn_hash);
 
@@ -144,6 +134,7 @@ class ImportPresenter extends Nette\Application\UI\Presenter
 
         if ($close)
         {
+   
             $this->redirect('Output:output');
         }
            
