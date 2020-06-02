@@ -6,7 +6,7 @@ application:
 		*: App\*Module\Presenters\*Presenter
 
 database:
-	dsn: "sqlite:%appDir%/Model/database.sql"
+	dsn: "mysql:%appDir%/Model/database.sql"
 
 services:
 	- App\Model\ExportTable

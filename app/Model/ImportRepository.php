@@ -36,9 +36,12 @@ class ImportRepository
 	}
 
 
-	public function insert(iterable $values): void
+	public function insert($value_hash, $value_date, $value_amount, $value_comment)
 	{
-		$this->findAll()->insert($values);
+		return $this->findAll()->insert(['transaction_hash' => $value_hash,
+										'payment_date' => $value_date,
+										'amount' => $value_amount,
+										'comment' => $value_comment]);
 	}
 
 	public function findHash($val)

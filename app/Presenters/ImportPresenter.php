@@ -109,12 +109,7 @@ class ImportPresenter extends Nette\Application\UI\Presenter
                                 $check_trn = $this->csv_import->findHash($trn_hash);
 
                                 if ($check_trn == 0) {
-                                    $this->csv_import->insert([
-                                        'transaction_hash' => $trn_hash,
-                                        'payment_date' => $payment_date,
-                                        'amount' => $amount,
-                                        'comment' => $comment
-                                    ]);
+                                    $this->csv_import->insert($trn_hash, $payment_date, $amount, $comment);
                                 }
                             }
                         }
